@@ -1,9 +1,9 @@
 /*
-  FILE: MC14489.h
-  AUTHOR: Ignacy110 (github.com/Ignacy110)
+	FILE: MC14489.h
+	AUTHOR: Ignacy110 (github.com/Ignacy110)
 
 	MC14489 Arduino Library
-  https://github.com/Ignacy110/MC14489
+	https://github.com/Ignacy110/MC14489
 
 	Copyright (C) 2026 Ignacy110
 
@@ -29,10 +29,10 @@
 class MC14489 {
 
 private:
-  uint8_t _dataPin, _clockPin, _enablePin;
-  uint32_t _buffer;
+    uint8_t _dataPin, _clockPin, _enablePin;
+    uint32_t _buffer;
 
-  enum class regBits {
+    enum class regBits {
     confRegMSB = 31,
     confRegLSB = 24,
     displayRegMSB = 23,
@@ -42,21 +42,21 @@ private:
     brightnessBit = 23,
     dotPointLSB = 20,
 
-  }
+    };
 
 public:
-  MC14489(uint8_t dataPin, uint8_t clockPin, uint8_t enablePin);
+    MC14489(uint8_t dataPin, uint8_t clockPin, uint8_t enablePin);
 
-  void begin();
-  void display();
-  void displaySettings();
-  void setDigit(uint8_t position, uint8_t value);
-  void setSpecialChar(uint8_t position, bool value);
-  void setBrightness(bool brightness);
-  void setDotPoint(uint8_t value);
-  void setValue(uint8_t position, uint16_t value);
-  void setValue(uint8_t position, uint16_t value, uint8_t lenght);
-  void setDisplay(uint8_t position1, uint8_t position2, uint8_t position3, uint8_t position4, uint8_t position5, uint8_t dotPoint);
+    void begin();
+    void display();
+    void displaySettings();
+    void setDigit(uint8_t position, uint8_t value);
+    void setSpecialChar(uint8_t position, bool value);
+    void setBrightness(bool brightness);
+    void setDotPoint(uint8_t value);
+    void setValue(uint8_t position, uint16_t value);
+    void setValue(uint8_t position, uint16_t value, uint8_t lenght);
+    void setDisplay(uint8_t position1, uint8_t position2, uint8_t position3, uint8_t position4, uint8_t position5, uint8_t dotPoint);
 };
 
 #endif
