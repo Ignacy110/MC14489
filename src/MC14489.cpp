@@ -1,12 +1,33 @@
+/*
+  FILE: MC14489.cpp
+  AUTHOR: Ignacy110 (github.com/Ignacy110)
+
+	MC14489 Arduino Library
+  https://github.com/Ignacy110/MC14489
+
+	Copyright (C) 2026 Ignacy110
+
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
+
+	The Library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+	See the GNU Lesser General Public License for more details.
+
+	You should have received a copy of the GNU Lesser General Public
+	License along with the GNU C Library; if not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "MC14489.h"
 
-// KONSTRUKTOR – tylko zapis pinów
 MC14489::MC14489(uint8_t d, uint8_t c, uint8_t e)
   : _dataPin(d), _clockPin(c), _enablePin(e)
 {
 }
 
-// begin() – konfiguracja + stan początkowy
 void MC14489::begin()
 {
   pinMode(_dataPin, OUTPUT);
@@ -27,7 +48,7 @@ void MC14489::display()
 
   digitalWrite(_enablePin, LOW);
 
-  for (int8_t bit = 23; bit >= 0; bit--)
+  for (int8_t bit = regBits::displayRegMSB; bit >= regBits::displayRegLSB; bit--)
   {
     digitalWrite(_dataPin, (_buffer >> bit) & 1);
     digitalWrite(_clockPin, HIGH);
@@ -41,7 +62,7 @@ void MC14489::displaySettings()
 {
   digitalWrite(_enablePin, LOW);
 
-  for (int8_t bit = 31; bit >= 24; bit--)
+  for (int8_t bit = regBits::confRegMSB; bit >= regBits::confRegLSB; bit--)
   {
     digitalWrite(_dataPin, (_buffer >> bit) & 1);
     digitalWrite(_clockPin, HIGH);
@@ -55,29 +76,26 @@ void MC14489::setDigit(uint8_t position, uint8_t value)
 {
   uint8_t shift = 4 * (position-1);
 
-  _buffer &= ~(0xFUL << shift); // Czyść stare 4 bity
-  _buffer |= ((uint32_t)(value & 0x0F) << shift); // Wpisz nowe
+  _buffer &= ~(0xFUL << shift);
+  _buffer |= ((uint32_t)(value & 0x0F) << shift);
 }
 
 void MC14489::setSpecialChar(uint8_t position, bool value)
 {
-  _buffer &= ~(0b1UL << (position+24)); // Czyścimy poprzedni bit
-  _buffer |= ((uint32_t)(value & 1) << (position+24)); // Wpisz nowe
-  //displaySettings();
+  _buffer &= ~(0b1UL << (position + regBits::specialDecodeLSB - 1));
+  _buffer |= ((uint32_t)(value & 1) << (position + regBits::specialDecodeLSB - 1));
 }
 
 void MC14489::setBrightness(bool brightness)
 {
-  _buffer &= ~(0b1UL << (23)); // Czyścimy poprzedni bit
-  _buffer |= ((uint32_t)(brightness & 1) << 23); // Wpisz nowe
-  //display();
+  _buffer &= ~(0b1UL << (regBits::brightnessBit));
+  _buffer |= ((uint32_t)(brightness & 1) << regBits::brightnessBit);
 }
 
 void MC14489::setDotPoint(uint8_t value)
 {
-  _buffer &= ~(0b111UL << (20)); // Czyścimy poprzedni bit
-  _buffer |= ((uint32_t)(value & 0b111) << 20); // Wpisz nowe
-  //display();
+  _buffer &= ~(0b111UL << (regBits::dotPointLSB));
+  _buffer |= ((uint32_t)(value & 0b111) << regBits::dotPointLSB);
 }
 
 void MC14489:: setValue(uint8_t position, uint16_t value)
