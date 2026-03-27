@@ -18,7 +18,7 @@
 	See the GNU Lesser General Public License for more details.
 
 	You should have received a copy of the GNU Lesser General Public
-	License along with the GNU C Library; if not, see <http://www.gnu.org/licenses/>.
+	License along with this library; if not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "MC14489.h"
@@ -70,6 +70,19 @@ void MC14489::displaySettings()
     }
 
     digitalWrite(_enablePin, HIGH);
+}
+
+void MC14489::set(uint8_t position, uint8_t value)
+{
+    uint8_t shift = 4 * (position-1);
+
+    _buffer &= ~(0xFUL << shift);
+    _buffer |= ((uint32_t)(value & 0x0F) << shift);
+}
+
+void MC14489::set(uint8_t position, char value)
+{
+
 }
 
 void MC14489::setDigit(uint8_t position, uint8_t value)
@@ -132,5 +145,46 @@ void MC14489:: setDisplay(uint8_t position1, uint8_t position2, uint8_t position
     {
         setSpecialChar(i+1,positions[i] & 0b10000);
         setDigit(i+1,positions[i] & 0b01111);
+    }
+}
+
+void MC14489:: uint8_t encodeChar(char c) {
+    switch (c) {
+        case '0': return 0;
+        case '1': return 1;
+        case '2': return 2;
+        case '3': return 3;
+        case '4': return 4;
+        case '5': return 5;
+        case '6': return 6;
+        case '7': return 7;
+        case '8': return 8;
+        case '9': return 9;
+
+        case 'A': return 10;
+        case 'B': return 11;
+        case 'C': return 12;
+        case 'D': return 13;
+        case 'E': return 14;
+        case 'F': return 15;
+
+        case 'c': return 17;
+        case 'H': return 18;
+        case 'h': return 19;
+        case 'J': return 20;
+        case 'L': return 21;
+        case 'n': return 22;
+        case 'o': return 23;
+        case 'P': return 24;
+        case 'r': return 25;
+        case 'U': return 26;
+        case 'u': return 27;
+        case 'y': return 28;
+
+        case '-': return 29; // dash
+        case '=': return 30; // equal
+        case '*': return 31; // degree
+
+        default: return 16;  // space (empty)
     }
 }

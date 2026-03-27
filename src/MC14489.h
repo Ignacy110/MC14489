@@ -18,7 +18,7 @@
 	See the GNU Lesser General Public License for more details.
 
 	You should have received a copy of the GNU Lesser General Public
-	License along with the GNU C Library; if not, see <http://www.gnu.org/licenses/>.
+	License along with this library; if not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef MC14489_H
@@ -32,17 +32,35 @@ private:
     uint8_t _dataPin, _clockPin, _enablePin;
     uint32_t _buffer;
 
-    enum class regBits {
-    confRegMSB = 31,
-    confRegLSB = 24,
-    displayRegMSB = 23,
-    displayRegLSB = 0,
+    enum class regBits : uint8_t {
+        confRegMSB = 31,
+        confRegLSB = 24,
+        displayRegMSB = 23,
+        displayRegLSB = 0,
 
-    specialDecodeLSB = 25,
-    brightnessBit = 23,
-    dotPointLSB = 20,
-
+        specialDecodeLSB = 25,
+        brightnessBit = 23,
+        dotPointLSB = 20,
     };
+
+    // enum class specialChars : uint8_t {
+    //     space = 16,
+    //     c = 17,
+    //     H = 18,
+    //     h = 19,
+    //     J = 20,
+    //     L = 21,
+    //     n = 22,
+    //     o = 23,
+    //     P = 24,
+    //     r = 25,
+    //     U = 26,
+    //     u = 27,
+    //     y = 28,
+    //     dash = 29,
+    //     equal = 20,
+    //     degree = 31,
+    // }
 
 public:
     MC14489(uint8_t dataPin, uint8_t clockPin, uint8_t enablePin);
@@ -50,6 +68,10 @@ public:
     void begin();
     void display();
     void displaySettings();
+
+    void set(uint8_t position, uint8_t value);
+    void set(uint8_t position, char value);
+
     void setDigit(uint8_t position, uint8_t value);
     void setSpecialChar(uint8_t position, bool value);
     void setBrightness(bool brightness);
@@ -57,6 +79,8 @@ public:
     void setValue(uint8_t position, uint16_t value);
     void setValue(uint8_t position, uint16_t value, uint8_t lenght);
     void setDisplay(uint8_t position1, uint8_t position2, uint8_t position3, uint8_t position4, uint8_t position5, uint8_t dotPoint);
+
+    uint8_t encodeChar(char c);
 };
 
 #endif
