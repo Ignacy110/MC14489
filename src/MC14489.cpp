@@ -48,7 +48,7 @@ void MC14489::display()
 
     digitalWrite(_enablePin, LOW);
 
-    for (int8_t bit = regBits::displayRegMSB; bit >= regBits::displayRegLSB; bit--)
+    for (int8_t bit = static_cast<uint8_t>(regBits::displayRegMSB); bit >= static_cast<uint8_t>(regBits::displayRegLSB); bit--)
     {
         digitalWrite(_dataPin, (_buffer >> bit) & 1);
         digitalWrite(_clockPin, HIGH);
@@ -62,7 +62,7 @@ void MC14489::displaySettings()
 {
     digitalWrite(_enablePin, LOW);
 
-    for (int8_t bit = regBits::confRegMSB; bit >= regBits::confRegLSB; bit--)
+    for (int8_t bit = static_cast<uint8_t>(regBits::confRegMSB); bit >= static_cast<uint8_t>(regBits::confRegLSB); bit--)
     {
         digitalWrite(_dataPin, (_buffer >> bit) & 1);
         digitalWrite(_clockPin, HIGH);
@@ -72,67 +72,99 @@ void MC14489::displaySettings()
     digitalWrite(_enablePin, HIGH);
 }
 
-void MC14489::set(uint8_t position, uint8_t value)
+void MC14489::set(uint8_t position, int value, bool direction)
 {
-    uint8_t shift = 4 * (position-1);
-
-    _buffer &= ~(0xFUL << shift);
-    _buffer |= ((uint32_t)(value & 0x0F) << shift);
+    if(value == 0)
+        setSegment(position, 0);
+    else
+    {
+        if(value < 0)
+        {
+            negativeNumber = 1;
+            value = abs(value);
+        }
+        else
+        {
+            negativeNumber = 0;
+        }
+        if(direction)
+        {
+            while(value > 0)
+            {
+                setSegment(position, value % 10);
+                value /= 10;
+                position--;
+            }
+            if (negativeNumber)
+                set(position,'-',0);
+        }
+        else
+        {
+            numberLength = countDigits(value);
+            while(value > 0)
+            {
+                setSegment(position + numberLength - 1, value % 10);
+                value /= 10;
+                position--;
+            }
+            if (negativeNumber)
+                set(position + numberLength - 1,'-',0);
+        }
+    }
 }
 
-void MC14489::set(uint8_t position, char value)
+void MC14489::set(uint8_t position, char value, bool direction)
 {
-
+    setSegment(position, value);
 }
 
-void MC14489::setDigit(uint8_t position, uint8_t value)
+void MC14489::setSegment(uint8_t position, int value)
 {
-    uint8_t shift = 4 * (position-1);
+    if (value >= 16) {
+        setSpecialChar(position, 1);
+        value &= 0x0F;
+    } else {
+        setSpecialChar(position, 0);
+    }
 
-    _buffer &= ~(0xFUL << shift);
-    _buffer |= ((uint32_t)(value & 0x0F) << shift);
+    if(position >= 1 && position <= 5)
+    {
+        uint8_t shift = 4 * (position-1);
+
+        _buffer &= ~(0xFUL << shift);
+        _buffer |= ((uint32_t)(value & 0x0F) << shift);
+    }
+}
+
+void MC14489::setSegment(uint8_t position, char value)
+{
+    if(position >= 1 && position <= 5)
+    {
+        value = encodeChar(value);
+
+        setSegment(position, (int)value);
+    }
 }
 
 void MC14489::setSpecialChar(uint8_t position, bool value)
 {
-    _buffer &= ~(0b1UL << (position + regBits::specialDecodeLSB - 1));
-    _buffer |= ((uint32_t)(value & 1) << (position + regBits::specialDecodeLSB - 1));
+    if(position >= 1 && position <= 5)
+    {
+        _buffer &= ~(0b1UL << (position + static_cast<uint8_t>(regBits::specialDecodeLSB) - 1));
+        _buffer |= ((uint32_t)(value & 1) << (position + static_cast<uint8_t>(regBits::specialDecodeLSB) - 1));
+    }
 }
 
 void MC14489::setBrightness(bool brightness)
 {
-    _buffer &= ~(0b1UL << (regBits::brightnessBit));
-    _buffer |= ((uint32_t)(brightness & 1) << regBits::brightnessBit);
+    _buffer &= ~(0b1UL << (static_cast<uint8_t>(regBits::brightnessBit)));
+    _buffer |= ((uint32_t)(brightness & 1) << static_cast<uint8_t>(regBits::brightnessBit));
 }
 
 void MC14489::setDotPoint(uint8_t value)
 {
-    _buffer &= ~(0b111UL << (regBits::dotPointLSB));
-    _buffer |= ((uint32_t)(value & 0b111) << regBits::dotPointLSB);
-}
-
-void MC14489:: setValue(uint8_t position, uint16_t value)
-{
-    if(value == 0)
-    setDigit(position, 0);
-    else
-    while(value > 0)
-    {
-        setDigit(position, value % 10);
-        value /= 10;
-        position--;
-    }
-}
-
-void MC14489:: setValue(uint8_t position, uint16_t value, uint8_t lenght)
-{
-    while(lenght > 0)
-    {
-        setDigit(position, value % 10);
-        value /= 10;
-        position--;
-        lenght--;
-    }
+    _buffer &= ~(0b111UL << (static_cast<uint8_t>(regBits::dotPointLSB)));
+    _buffer |= ((uint32_t)(value & 0b111) << static_cast<uint8_t>(regBits::dotPointLSB));
 }
 
 void MC14489:: setDisplay(uint8_t position1, uint8_t position2, uint8_t position3, uint8_t position4, uint8_t position5, uint8_t dotPoint)
@@ -144,11 +176,12 @@ void MC14489:: setDisplay(uint8_t position1, uint8_t position2, uint8_t position
     for(int i = 0; i<5; i++)
     {
         setSpecialChar(i+1,positions[i] & 0b10000);
-        setDigit(i+1,positions[i] & 0b01111);
+        setSegment(i+1,positions[i] & 0b01111);
     }
 }
 
-void MC14489:: uint8_t encodeChar(char c) {
+int MC14489:: encodeChar(char c)
+{
     switch (c) {
         case '0': return 0;
         case '1': return 1;
@@ -187,4 +220,17 @@ void MC14489:: uint8_t encodeChar(char c) {
 
         default: return 16;  // space (empty)
     }
+}
+
+uint8_t MC14489:: countDigits(int value)
+{
+    if (value == 0) return 1;
+
+    uint8_t count = 0;
+    while (value > 0)
+    {
+        value /= 10;
+        count++;
+    }
+    return count;
 }

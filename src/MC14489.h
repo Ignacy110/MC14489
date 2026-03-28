@@ -32,6 +32,9 @@ private:
     uint8_t _dataPin, _clockPin, _enablePin;
     uint32_t _buffer;
 
+    uint8_t numberLength;
+    bool negativeNumber;
+
     enum class regBits : uint8_t {
         confRegMSB = 31,
         confRegLSB = 24,
@@ -69,18 +72,20 @@ public:
     void display();
     void displaySettings();
 
-    void set(uint8_t position, uint8_t value);
-    void set(uint8_t position, char value);
+    void set(uint8_t position, int value, bool direction);
+    void set(uint8_t position, char value, bool direction);
 
-    void setDigit(uint8_t position, uint8_t value);
+    void setSegment(uint8_t position, int value);
+    void setSegment(uint8_t position, char value);
+
     void setSpecialChar(uint8_t position, bool value);
     void setBrightness(bool brightness);
     void setDotPoint(uint8_t value);
-    void setValue(uint8_t position, uint16_t value);
-    void setValue(uint8_t position, uint16_t value, uint8_t lenght);
     void setDisplay(uint8_t position1, uint8_t position2, uint8_t position3, uint8_t position4, uint8_t position5, uint8_t dotPoint);
 
-    uint8_t encodeChar(char c);
+    int encodeChar(char c);
+
+    uint8_t countDigits(int value);
 };
 
 #endif
