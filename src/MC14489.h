@@ -32,7 +32,7 @@ private:
     uint8_t _dataPin, _clockPin, _enablePin;
     uint32_t _buffer;
 
-    uint8_t numberLength;
+    uint8_t valueLength;
     bool negativeNumber;
 
     enum class regBits : uint8_t {
@@ -46,46 +46,30 @@ private:
         dotPointLSB = 20,
     };
 
-    // enum class specialChars : uint8_t {
-    //     space = 16,
-    //     c = 17,
-    //     H = 18,
-    //     h = 19,
-    //     J = 20,
-    //     L = 21,
-    //     n = 22,
-    //     o = 23,
-    //     P = 24,
-    //     r = 25,
-    //     U = 26,
-    //     u = 27,
-    //     y = 28,
-    //     dash = 29,
-    //     equal = 20,
-    //     degree = 31,
-    // }
+    void displaySettings();
+
+    void setSpecialChar(uint8_t position, bool value);
+
+    int encodeChar(char c);
+    uint8_t countDigits(int value);
 
 public:
     MC14489(uint8_t dataPin, uint8_t clockPin, uint8_t enablePin);
 
     void begin();
     void display();
-    void displaySettings();
 
+    void set(uint8_t position, int value);
     void set(uint8_t position, int value, bool direction);
-    void set(uint8_t position, char value, bool direction);
+
+    void set(uint8_t position, const char* str);
+    void set(uint8_t position, const char* str, bool direction);
 
     void setSegment(uint8_t position, int value);
     void setSegment(uint8_t position, char value);
 
-    void setSpecialChar(uint8_t position, bool value);
     void setBrightness(bool brightness);
     void setDotPoint(uint8_t value);
-    void setDisplay(uint8_t position1, uint8_t position2, uint8_t position3, uint8_t position4, uint8_t position5, uint8_t dotPoint);
-
-    int encodeChar(char c);
-
-    uint8_t countDigits(int value);
 };
 
 #endif

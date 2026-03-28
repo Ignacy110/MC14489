@@ -72,6 +72,11 @@ void MC14489::displaySettings()
     digitalWrite(_enablePin, HIGH);
 }
 
+void MC14489::set(uint8_t position, int value)
+{
+    set(position, value, 0);
+}
+
 void MC14489::set(uint8_t position, int value, bool direction)
 {
     if(value == 0)
@@ -96,26 +101,48 @@ void MC14489::set(uint8_t position, int value, bool direction)
                 position--;
             }
             if (negativeNumber)
-                set(position,'-',0);
+                set(position,"-",0);
         }
         else
         {
-            numberLength = countDigits(value);
+            valueLength = countDigits(value);
             while(value > 0)
             {
-                setSegment(position + numberLength - 1, value % 10);
+                setSegment(position + (uint8_t)negativeNumber + valueLength - 1, value % 10);
                 value /= 10;
                 position--;
             }
             if (negativeNumber)
-                set(position + numberLength - 1,'-',0);
+                set(position + (uint8_t)negativeNumber + valueLength - 1,"-",0);
         }
     }
 }
 
-void MC14489::set(uint8_t position, char value, bool direction)
+void MC14489::set(uint8_t position, const char* str)
 {
-    setSegment(position, value);
+    set(position, str, 0);
+}
+
+void MC14489::set(uint8_t position, const char* str, bool direction)
+{
+    valueLength = 0;
+    while(str[valueLength] != '\0') valueLength++;
+
+    if(direction)
+    {
+        for(uint8_t i = 0; i < valueLength && position >= 1; i++)
+        {
+            setSegment(position, str[valueLength-i-1]);
+            position--;
+        }
+    }
+    else
+    {
+        for(uint8_t i = 0; i < valueLength && (position + i) <= 5; i++)
+        {
+            setSegment(position + i, str[i]);
+        }
+    }
 }
 
 void MC14489::setSegment(uint8_t position, int value)
@@ -167,19 +194,6 @@ void MC14489::setDotPoint(uint8_t value)
     _buffer |= ((uint32_t)(value & 0b111) << static_cast<uint8_t>(regBits::dotPointLSB));
 }
 
-void MC14489:: setDisplay(uint8_t position1, uint8_t position2, uint8_t position3, uint8_t position4, uint8_t position5, uint8_t dotPoint)
-{
-    uint8_t positions[5] = {position1,position2,position3,position4,position5};
-
-    setDotPoint(dotPoint);
-
-    for(int i = 0; i<5; i++)
-    {
-        setSpecialChar(i+1,positions[i] & 0b10000);
-        setSegment(i+1,positions[i] & 0b01111);
-    }
-}
-
 int MC14489:: encodeChar(char c)
 {
     switch (c) {
@@ -195,9 +209,9 @@ int MC14489:: encodeChar(char c)
         case '9': return 9;
 
         case 'A': return 10;
-        case 'B': return 11;
+        case 'b': return 11;
         case 'C': return 12;
-        case 'D': return 13;
+        case 'd': return 13;
         case 'E': return 14;
         case 'F': return 15;
 
