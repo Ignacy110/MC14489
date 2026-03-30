@@ -228,6 +228,8 @@ int MC14489:: encodeChar(char c)
         case 'u': return 27;
         case 'y': return 28;
 
+        case 'O': return 0;
+
         case '-': return 29; // dash
         case '=': return 30; // equal
         case '*': return 31; // degree
