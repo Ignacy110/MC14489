@@ -48,6 +48,9 @@ private:
 
     void displaySettings();
 
+    void setDigit(uint8_t position, int value);
+    void setDigit(uint8_t position, char value);
+
     void setSpecialChar(uint8_t position, bool value);
 
     int encodeChar(char c);
@@ -65,10 +68,7 @@ public:
     void set(uint8_t position, const char* str);
     void set(uint8_t position, const char* str, bool direction);
 
-    void setSegment(uint8_t position, int value);
-    void setSegment(uint8_t position, char value);
-
-    void setBrightness(bool brightness);
+    void setBrightness(bool value);
     void setDotPoint(uint8_t value);
 };
 

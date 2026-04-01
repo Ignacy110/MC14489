@@ -80,7 +80,7 @@ void MC14489::set(uint8_t position, int value)
 void MC14489::set(uint8_t position, int value, bool direction)
 {
     if(value == 0)
-        setSegment(position, 0);
+        setDigit(position, 0);
     else
     {
         if(value < 0)
@@ -96,7 +96,7 @@ void MC14489::set(uint8_t position, int value, bool direction)
         {
             while(value > 0)
             {
-                setSegment(position, value % 10);
+                setDigit(position, value % 10);
                 value /= 10;
                 position--;
             }
@@ -108,7 +108,7 @@ void MC14489::set(uint8_t position, int value, bool direction)
             valueLength = countDigits(value);
             while(value > 0)
             {
-                setSegment(position + (uint8_t)negativeNumber + valueLength - 1, value % 10);
+                setDigit(position + (uint8_t)negativeNumber + valueLength - 1, value % 10);
                 value /= 10;
                 position--;
             }
@@ -132,7 +132,7 @@ void MC14489::set(uint8_t position, const char* str, bool direction)
     {
         for(uint8_t i = 0; i < valueLength && position >= 1; i++)
         {
-            setSegment(position, str[valueLength-i-1]);
+            setDigit(position, str[valueLength-i-1]);
             position--;
         }
     }
@@ -140,12 +140,12 @@ void MC14489::set(uint8_t position, const char* str, bool direction)
     {
         for(uint8_t i = 0; i < valueLength && (position + i) <= 5; i++)
         {
-            setSegment(position + i, str[i]);
+            setDigit(position + i, str[i]);
         }
     }
 }
 
-void MC14489::setSegment(uint8_t position, int value)
+void MC14489::setDigit(uint8_t position, int value)
 {
     if (value >= 16) {
         setSpecialChar(position, 1);
@@ -163,13 +163,13 @@ void MC14489::setSegment(uint8_t position, int value)
     }
 }
 
-void MC14489::setSegment(uint8_t position, char value)
+void MC14489::setDigit(uint8_t position, char value)
 {
     if(position >= 1 && position <= 5)
     {
         value = encodeChar(value);
 
-        setSegment(position, (int)value);
+        setDigit(position, (int)value);
     }
 }
 
@@ -182,16 +182,19 @@ void MC14489::setSpecialChar(uint8_t position, bool value)
     }
 }
 
-void MC14489::setBrightness(bool brightness)
+void MC14489::setBrightness(bool value)
 {
     _buffer &= ~(0b1UL << (static_cast<uint8_t>(regBits::brightnessBit)));
-    _buffer |= ((uint32_t)(brightness & 1) << static_cast<uint8_t>(regBits::brightnessBit));
+    _buffer |= ((uint32_t)(value & 1) << static_cast<uint8_t>(regBits::brightnessBit));
 }
 
 void MC14489::setDotPoint(uint8_t value)
 {
-    _buffer &= ~(0b111UL << (static_cast<uint8_t>(regBits::dotPointLSB)));
-    _buffer |= ((uint32_t)(value & 0b111) << static_cast<uint8_t>(regBits::dotPointLSB));
+    if(position >= 0 && position <= 7)
+    {
+        _buffer &= ~(0b111UL << (static_cast<uint8_t>(regBits::dotPointLSB)));
+        _buffer |= ((uint32_t)(value & 0b111) << static_cast<uint8_t>(regBits::dotPointLSB));
+    }
 }
 
 int MC14489:: encodeChar(char c)
