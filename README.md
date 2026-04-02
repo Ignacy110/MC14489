@@ -34,7 +34,7 @@ In the Arduino IDE:
 |CLOCK|11|clock signal|input|
 |DATA IN|12|serial data input|input|
 |BANK 2|13|second LED digit cathode|output|
-|VSS|14|GND|power|
+|VSS|14|**GND**|power|
 |BANK 3|15|third LED digit cathode|output|
 |BANK 4|16|fourth LED digit cathode|output|
 |BANK 5|17|fifth LED digit cathode|output|
@@ -61,16 +61,17 @@ To operate the display correctly, you must initialize the transmission by callin
 
 Example:
 ```cpp
-#include <MC14489.h>
-#define ledDataPin 2
-#define ledClockPin 3
-#define ledEnablePin 4
+#include <MC14489.h> // include the library
 
-MC14489 ledDisplay(ledDataPin, ledClockPin, ledEnablePin);
+#define ledDataPin 2 // define the Arduino pin number
+#define ledClockPin 3 // define the Arduino pin number
+#define ledEnablePin 4 // define the Arduino pin number
+
+MC14489 ledDisplay(ledDataPin, ledClockPin, ledEnablePin); // create an ledDisplay object using Arduino pins for communication with the MC14489
 
 void setup()
 {
-  ledDisplay.begin();
+  ledDisplay.begin(); // initialize communication
 }
 ```
 
@@ -81,26 +82,30 @@ All available methods and their syntax are described in  [paragraph 4](#4-method
 #### Simple example of use:
 This program alternately displays the number *12345* and the text *HELLO*.
 ```cpp
-#include <MC14489.h>
-#define ledDataPin 2
-#define ledClockPin 3
-#define ledEnablePin 4
-MC14489 ledDisplay(ledDataPin, ledClockPin, ledEnablePin);
+#include <MC14489.h> // include the library
+
+#define ledDataPin 2 // define the Arduino pin number
+#define ledClockPin 3 // define the Arduino pin number
+#define ledEnablePin 4 // define the Arduino pin number
+
+MC14489 ledDisplay(ledDataPin, ledClockPin, ledEnablePin); // create an ledDisplay object using Arduino pins for communication with the MC14489
 
 void setup()
 {
-  ledDisplay.begin();
+  ledDisplay.begin(); // initialize communication
 }
 
 void loop()
 {
-  ledDisplay.set(1,12345);
-  ledDisplay.display();
-  delay(1000);
+  ledDisplay.clear(0); // clear the display
+  ledDisplay.set(1,12345); // set the number 12345 starting from position 1
+  ledDisplay.display(); // display
+  delay(1000); // wait 1 second
 
-  ledDisplay.set(1,"HELLO");
-  ledDisplay.display();
-  delay(1000);
+  ledDisplay.clear(0); // clear the display
+  ledDisplay.set(1,"HELLO"); // set the text "HELLO" starting from position 1
+  ledDisplay.display(); // display
+  delay(1000); // wait 1 second
 }
 ```
 > [!TIP]
@@ -116,7 +121,7 @@ void loop()
 
 The `display()` method is used to refresh information on the display.
 
-After calling this method, all changes made using `set()`, `setDotPoint()`, and `setBrightness()` are applied to the display.
+After calling this method, all changes made using `set()`, `clear()`, `setDotPoint()`, and `setBrightness()` are applied to the display.
 
 ### 4.2 Setting the number or characters on the display
 
@@ -145,7 +150,18 @@ Specific prototypes of the set() function and examples of their use in practice 
 >[!NOTE]
 >If the value exceeds the available display space, it will be truncated.
 
-### 4.3 Setting dots
+### 4.3 Clear display
+
+The `clear(bool value)` method is used to clear the display.
+
+Depending on the parameter, this method can clean the screen in two ways:
+
+|value| Function |
+| :-: | --- |
+|0|blank digits|
+|1|all digits set to 0|
+
+### 4.4 Setting dots
 
 The `setDotPoint(uint8_t value)` method is used to set a dot on the display.
 
@@ -166,7 +182,7 @@ The `value` parameter controls which decimal points are enabled:
 
 Values greater than 7 are ignored.
 
-### 4.4 Setting brightness
+### 4.5 Setting brightness
 
 The `setBrightness(bool value)` method is used to set the display brightness.
 
