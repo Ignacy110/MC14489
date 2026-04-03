@@ -1,5 +1,7 @@
 /*
   FILE: MC14489.h
+  VERSION: 1.0.0
+  DATE: 03.04.2026
   AUTHOR: Ignacy110 (github.com/Ignacy110)
 
   MC14489 Arduino Library
@@ -43,7 +45,7 @@ private:
 
     specialDecodeLSB = 25,
     brightnessBit = 23,
-    dotPointLSB = 20,
+    decimalPointLSB = 20,
   };
 
   void displaySettings();
@@ -71,7 +73,7 @@ public:
   void clear(bool value);
 
   void setBrightness(bool value);
-  void setDotPoint(uint8_t value);
+  void setDecimalPoint(uint8_t value);
 };
 
 #endif

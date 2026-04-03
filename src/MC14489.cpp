@@ -1,5 +1,7 @@
 /*
   FILE: MC14489.cpp
+  VERSION: 1.0.0
+  DATE: 03.04.2026
   AUTHOR: Ignacy110 (github.com/Ignacy110)
 
   MC14489 Arduino Library
@@ -201,12 +203,12 @@ void MC14489::setBrightness(bool value)
   _buffer |= ((uint32_t)(value & 1) << static_cast<uint8_t>(regBits::brightnessBit));
 }
 
-void MC14489::setDotPoint(uint8_t value)
+void MC14489::setDecimalPoint(uint8_t value)
 {
   if(value >= 0 && value <= 7)
   {
-    _buffer &= ~(0b111UL << (static_cast<uint8_t>(regBits::dotPointLSB)));
-    _buffer |= ((uint32_t)(value & 0b111) << static_cast<uint8_t>(regBits::dotPointLSB));
+    _buffer &= ~(0b111UL << (static_cast<uint8_t>(regBits::decimalPointLSB)));
+    _buffer |= ((uint32_t)(value & 0b111) << static_cast<uint8_t>(regBits::decimalPointLSB));
   }
 }
 

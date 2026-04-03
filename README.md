@@ -1,17 +1,17 @@
 # MC14489
 
-Arduino library for controlling the MC14489 - a 5-digit LED display driver capable of driving multiple common cathode 7-segment displays using a simple serial interface.
+Arduino library for controlling the MC14489, a 5-digit LED display driver capable of driving multiple common cathode 7-segment displays using a simple serial interface.
 
 ## 1. Installation
 
-<!-- ### Method 1:
+### Method 1:
 In the Arduino IDE:
 1. Open *LIBRARY MANAGER*
 2. Search phrase `MC14489`
 3. Find the ***MC14489** by Ignacy110* library in the list
 4. Click *INSTALL*
 
-### Method 2: -->
+### Method 2:
 1. Download the repository as *.zip* file.
 2. In the Arduino IDE, select:
 *Sketch → Include Library → Add .ZIP Library...*
@@ -47,7 +47,7 @@ Communication uses a 3-wire interface:
 - CLOCK
 - DATA IN
 
-These pins should be connected to Arduino digital pins defined in the code (see [section 3.1](#31-basic-setup)).
+These three pins should be connected to Arduino digital pins defined in the code (see [section 3.1](#31-basic-setup)).
 
 ## 3. Usage
 
@@ -55,7 +55,7 @@ These pins should be connected to Arduino digital pins defined in the code (see 
 
 Include this library `<MC14489.h>`.
 
-Before using the library methods you need to create an instance of the `MC14489` class e.g. `MC14489 ledDisplay(2, 3, 4);` where the parameters denote pins: DATA, CLOCK, <span style="text-decoration: overline;">ENABLE</span>. For readability you can define pins in advance using `#define`.
+Before using the library methods, you need to create an instance of the `MC14489` class e.g. `MC14489 ledDisplay(2, 3, 4);` where the parameters denote pins: DATA, CLOCK, <span style="text-decoration: overline;">ENABLE</span>. For readability you can define pins in advance using `#define`.
 
 To operate the display correctly, you must initialize the transmission by calling the `begin()` method.
 
@@ -67,7 +67,8 @@ Example:
 #define ledClockPin 3 // define the Arduino pin number
 #define ledEnablePin 4 // define the Arduino pin number
 
-MC14489 ledDisplay(ledDataPin, ledClockPin, ledEnablePin); // create an ledDisplay object using Arduino pins for communication with the MC14489
+MC14489 ledDisplay(ledDataPin, ledClockPin, ledEnablePin);
+// create an ledDisplay object using Arduino pins for communication with the MC14489
 
 void setup()
 {
@@ -77,7 +78,7 @@ void setup()
 
 ### 3.2 Use library methods
 
-All available methods and their syntax are described in  [paragraph 4](#4-methods).
+All available methods and their syntax are described in [paragraph 4](#4-methods).
 
 #### Simple example of use:
 This program alternately displays the number *12345* and the text *HELLO*.
@@ -88,7 +89,8 @@ This program alternately displays the number *12345* and the text *HELLO*.
 #define ledClockPin 3 // define the Arduino pin number
 #define ledEnablePin 4 // define the Arduino pin number
 
-MC14489 ledDisplay(ledDataPin, ledClockPin, ledEnablePin); // create an ledDisplay object using Arduino pins for communication with the MC14489
+MC14489 ledDisplay(ledDataPin, ledClockPin, ledEnablePin);
+// create an ledDisplay object using Arduino pins for communication with the MC14489
 
 void setup()
 {
@@ -100,12 +102,12 @@ void loop()
   ledDisplay.clear(0); // clear the display
   ledDisplay.set(1,12345); // set the number 12345 starting from position 1
   ledDisplay.display(); // display
-  delay(1000); // wait 1 second
+  delay(1000); // 1 second delay
 
   ledDisplay.clear(0); // clear the display
   ledDisplay.set(1,"HELLO"); // set the text "HELLO" starting from position 1
   ledDisplay.display(); // display
-  delay(1000); // wait 1 second
+  delay(1000); // 1 second delay
 }
 ```
 > [!TIP]
@@ -121,11 +123,14 @@ void loop()
 
 The `display()` method is used to refresh information on the display.
 
-After calling this method, all changes made using `set()`, `clear()`, `setDotPoint()`, and `setBrightness()` are applied to the display.
+After calling this method, all changes made using `set()`, `clear()`, `setDecimalPoint()`, and `setBrightness()` are applied to the display.
 
 ### 4.2 Setting the number or characters on the display
 
 The `set(position, value, direction)` method is used to set numbers and characters on the display.
+
+>[!TIP]
+>A list of supported characters is available in [paragraph 5](#5-list-of-available-characters).
 
 This method is overloaded (there are four variants) and allows sending numbers or text, with optional left or right alignment.
 
@@ -154,31 +159,31 @@ Specific prototypes of the set() function and examples of their use in practice 
 
 The `clear(bool value)` method is used to clear the display.
 
-Depending on the parameter, this method can clean the screen in two ways:
+Depending on the parameter, this method can clear the display in two ways:
 
 |value| Function |
 | :-: | --- |
 |0|blank digits|
 |1|all digits set to 0|
 
-### 4.4 Setting dots
+### 4.4 Setting decimal points
 
-The `setDotPoint(uint8_t value)` method is used to set a dot on the display.
+The `setDecimalPoint(uint8_t value)` method is used to set dots - decimal points on the display.
 
-The MC14489 chip allows you to set the displayed dots in 8 ways.
+The MC14489 chip allows you to set the displayed decimal points in 8 ways.
 
 The `value` parameter controls which decimal points are enabled:
 
 |value|Function |
 | :-: | --- |
-|0|no dot points|
-|1|dot point in the **first digit**|
-|2|dot point in the **second digit**|
-|3|dot point in the **third digit**|
-|4|dot point in the **fourth digit**|
-|5|dot point in the **fifth digit**|
-|6|dot points in **first digit** and **second digit**|
-|7|dot points in **all digits**|
+|0|no decimal points|
+|1|decimal point after the **first digit**|
+|2|decimal point after the **second digit**|
+|3|decimal point after the **third digit**|
+|4|decimal point after the **fourth digit**|
+|5|decimal point after the **fifth digit**|
+|6|decimal points after **first digit** and **second digit**|
+|7|decimal points after **all digits**|
 
 Values greater than 7 are ignored.
 
@@ -194,3 +199,12 @@ The `value` parameter selects the brightness level:
 | :-: | --- |
 |0|dim display|
 |1|bright display|
+
+## 5. List of available characters
+
+The MC14489 chip can display the following numbers and characters:
+
+- numbers: 1, 2, 3, 4, 5, 6, 7, 8, 9, 0
+- characters (in string): 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, A, b, C, d, E, F, c, H, h, J, L, n, O, o, P, r, U, u, y, -, =, *, *space* (" ")
+
+Passing a character from outside this list to the set() method causes a *space* to be displayed.

@@ -25,7 +25,7 @@ void loop()
   ledDisplay.clear(0); // clear the display
   ledDisplay.set(4,"*C"); // set the string "*C"
   ledDisplay.set(3, (int)(temperature * 10), 1); // set temperature on the display; multiply by 10 to display one decimal place (integer required); right-align for third position
-  ledDisplay.setDotPoint(2); // set decimal point after second digit
+  ledDisplay.setDecimalPoint(2); // set decimal point after second digit
   ledDisplay.display(); // update the display
 
   delay(1000);

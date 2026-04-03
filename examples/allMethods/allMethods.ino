@@ -22,7 +22,7 @@ void loop()
   ledDisplay.clear(0);
   ledDisplay.set(2,123); //  set number 123 from the second position
   ledDisplay.display(); // update the display
-  delay(1000); // wait 1 second
+  delay(1000); // 1 second delay
 
   ledDisplay.clear(0);
   ledDisplay.set(5,840,1); // set number 840 and right align to the fifth position
@@ -49,37 +49,37 @@ void loop()
   ledDisplay.display();
   delay(1000);
 
-  // setDotPoint() methods - decimal point settings:
+  // setDecimalPoint() methods - decimal point settings:
 
-  ledDisplay.setDotPoint(1); // set the dot after the first digit
+  ledDisplay.setDecimalPoint(1); // set the decimal point after the first digit
   ledDisplay.display();
   delay(1000);
 
-  ledDisplay.setDotPoint(2); // set the dot after the second digit
+  ledDisplay.setDecimalPoint(2); // set the decimal point after the second digit
   ledDisplay.display();
   delay(1000);
 
-  ledDisplay.setDotPoint(3); // set the dot after the third digit
+  ledDisplay.setDecimalPoint(3); // set the decimal point after the third digit
   ledDisplay.display();
   delay(1000);
 
-  ledDisplay.setDotPoint(4); // set the dot after the fourth digit
+  ledDisplay.setDecimalPoint(4); // set the decimal point after the fourth digit
   ledDisplay.display();
   delay(1000);
 
-  ledDisplay.setDotPoint(5); // set the dot after the fifth digit
+  ledDisplay.setDecimalPoint(5); // set the decimal point after the fifth digit
   ledDisplay.display();
   delay(1000);
 
-  ledDisplay.setDotPoint(6); // set the dot after first and second digit
+  ledDisplay.setDecimalPoint(6); // set the decimal point after first and second digit
   ledDisplay.display();
   delay(1000);
 
-  ledDisplay.setDotPoint(7); // set the dot after all digits
+  ledDisplay.setDecimalPoint(7); // set the decimal point after all digits
   ledDisplay.display();
   delay(1000);
 
-  ledDisplay.setDotPoint(0); // no dots
+  ledDisplay.setDecimalPoint(0); // no decimal points
   ledDisplay.display();
   delay(1000);
 

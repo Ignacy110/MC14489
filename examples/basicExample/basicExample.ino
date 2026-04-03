@@ -19,10 +19,10 @@ void loop()
   ledDisplay.clear(0); // clear the display
   ledDisplay.set(1,12345); // set the number 12345 starting from position 1
   ledDisplay.display(); // update the display
-  delay(1000); // wait 1 second
+  delay(1000); // 1 second delay
 
   ledDisplay.clear(0); // clear the display
   ledDisplay.set(1,"HELLO"); // set the text "HELLO" starting from position 1
   ledDisplay.display(); // update the display
-  delay(1000); // wait 1 second
+  delay(1000); // 1 second delay
 }
